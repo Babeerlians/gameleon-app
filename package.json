@@ -1,10 +1,10 @@
 {
-  "name": "Gameleon App",
+  "name": "gameleon",
   "version": "1.0.0",
   "description": "A community for sharing videogames ",
   "author": "Babeerlians",
   "license": "BSD-3-Clause",
-  "repository": "Polymer/polymer-starter-kit",
+  "repository": "https://github.com/Babeerlians/gameleon-app.git",
   "scripts": {
     "start": "polymer serve",
     "build": "polymer build",

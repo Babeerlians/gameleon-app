@@ -31,7 +31,7 @@ setPassiveTouchGestures(true);
 // in `index.html`.
 setRootPath(MyAppGlobals.rootPath);
 
-class MyApp extends PolymerElement {
+class GameleonApp extends PolymerElement {
   static get template() {
     return html`
       <style>
@@ -96,7 +96,7 @@ class MyApp extends PolymerElement {
           <app-header slot="header" condenses="" reveals="" effects="waterfall">
             <app-toolbar>
               <paper-icon-button icon="my-icons:menu" drawer-toggle=""></paper-icon-button>
-              <div main-title="">My App</div>
+              <div main-title="">Gameleon App</div>
             </app-toolbar>
           </app-header>
 
@@ -170,4 +170,4 @@ class MyApp extends PolymerElement {
   }
 }
 
-window.customElements.define('my-app', MyApp);
+window.customElements.define('gameleon-app', GameleonApp);
