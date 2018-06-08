@@ -1,13 +1,3 @@
-/**
- * @license
- * Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
- * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
- * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
- * Code distributed by Google as part of the polymer project is also
- * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
- */
-
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { setPassiveTouchGestures, setRootPath } from '@polymer/polymer/lib/utils/settings.js';
 import '@polymer/app-layout/app-drawer/app-drawer.js';
@@ -22,6 +12,7 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
+import './components/home-view.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -37,18 +28,18 @@ class GameleonApp extends PolymerElement {
       <style>
         :host {
           --app-primary-color: #F1942F;
+          --app-dark-color: #22180e;
           --app-secondary-color: black;
-
           display: block;
         }
 
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
+        .burger {
           display: none;
         }
 
         app-header {
           color: #fff;
-          background-color: var(--app-primary-color);
+          background-color: var(--app-dark-color);
         }
 
         app-header paper-icon-button {
@@ -60,16 +51,31 @@ class GameleonApp extends PolymerElement {
         }
 
         .drawer-list a {
-          display: block;
+          display: inline-block;
           padding: 0 16px;
           text-decoration: none;
-          color: var(--app-secondary-color);
+          color: var(--app-primary-color);
           line-height: 40px;
         }
 
         .drawer-list a.iron-selected {
-          color: black;
-          font-weight: bold;
+          color: white;
+          font-weight: normal;
+        }
+
+        .drawer {
+          margin-top: 4em;
+        }
+
+        .main-logo {
+          width: 100px;
+          height: auto;
+        }
+
+        @media (max-width: 640px) {
+          .burger {
+           display: block;
+          }
         }
       </style>
 
@@ -80,23 +86,19 @@ class GameleonApp extends PolymerElement {
       </app-route>
 
       <app-drawer-layout fullbleed="" narrow="{{narrow}}">
-        <!-- Drawer content -->
-        <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-          <app-toolbar>Menu</app-toolbar>
-          <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-            <a name="view1" href="[[rootPath]]view1">View One</a>
-            <a name="view2" href="[[rootPath]]view2">View Two</a>
-            <a name="view3" href="[[rootPath]]view3">View Three</a>
-          </iron-selector>
-        </app-drawer>
-
         <!-- Main content -->
         <app-header-layout has-scrolling-region="">
 
           <app-header slot="header" condenses="" reveals="" effects="waterfall">
             <app-toolbar>
-              <paper-icon-button icon="my-icons:menu" drawer-toggle=""></paper-icon-button>
+              <paper-icon-button icon="my-icons:menu" class="burger"></paper-icon-button>
+              <!-- <img src="../images/manifest/icon-512x512.png" alt="logo Babeerlians" class="main-logo"> -->
               <div main-title="">Gameleon App</div>
+              <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                  <a name="view1" href="[[rootPath]]view1">Login</a>
+                  <a name="view2" href="[[rootPath]]view2">Register</a>
+                  <a name="view3" href="[[rootPath]]view3">Browse Games</a>
+              </iron-selector>
             </app-toolbar>
           </app-header>
 
@@ -107,7 +109,7 @@ class GameleonApp extends PolymerElement {
             <my-view404 name="view404"></my-view404>
           </iron-pages>
         </app-header-layout>
-      </app-drawer-layout>
+     </app-drawer-layout> 
     `;
   }
 
@@ -143,9 +145,9 @@ class GameleonApp extends PolymerElement {
     }
 
     // Close a non-persistent drawer when the page & route are changed.
-    if (!this.$.drawer.persistent) {
+  /*   if (!this.$.drawer.persistent) {
       this.$.drawer.close();
-    }
+    } */
   }
 
   _pageChanged(page) {
