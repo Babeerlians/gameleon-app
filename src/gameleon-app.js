@@ -36,7 +36,7 @@ class GameleonApp extends PolymerElement {
     return html`
       <style>
         :host {
-          --app-primary-color: #4285f4;
+          --app-primary-color: #F1942F;
           --app-secondary-color: black;
 
           display: block;

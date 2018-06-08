@@ -6,7 +6,7 @@
   "license": "BSD-3-Clause",
   "repository": "https://github.com/Babeerlians/gameleon-app.git",
   "scripts": {
-    "start": "polymer serve",
+    "start": "polymer serve -o",
     "build": "polymer build",
     "lint": "polymer lint",
     "test": "polymer test",
