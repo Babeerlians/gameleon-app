@@ -6,7 +6,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
-import './components/home-view.js';
 import './components/app-footer.js';
 
 // Gesture events like tap and track generated from touch will not be
@@ -95,6 +94,31 @@ class GameleonApp extends PolymerElement {
           font-weight: normal;
         }
 
+        .toolbar_responsive {
+          display: none;
+          width: 100%;
+          background: var(--app-primary-color);
+          height: auto;
+          padding: 0;
+          margin: 0;
+        }
+
+        .toolbar_responsive ul {
+          padding: 0px;
+          margin: 0;        
+        }
+
+        .toolbar_responsive li {
+          list-style-type: none;
+          border-bottom: 1px dotted black;
+          padding: 1em;
+        }
+
+        .toolbar_responsive li a {
+          text-decoration: none;
+          color: var(--app-dark-color);
+        }
+
         @media (max-width: 640px) {
           .masthead paper-icon-button{
              display: block;
@@ -110,6 +134,10 @@ class GameleonApp extends PolymerElement {
           .main-logo {
             font-size: 100%;
           }
+
+          .toolbar_responsive {
+            display: block;
+          }
         }
       </style>
 
@@ -121,23 +149,33 @@ class GameleonApp extends PolymerElement {
 
       <header class="masthead">
         <div class="logo-box">
-          <paper-icon-button icon="my-icons:menu"></paper-icon-button>
+          <paper-icon-button icon="my-icons:menu" on-click="_toggleMenu"></paper-icon-button>
           <div main-title="" class="main-logo">
-            <a name="view1" href="[[rootPath]]view1">GAMELEON APP</a>
+            <a name="home" href="[[rootPath]]home">GAMELEON APP</a>
           </div>
         </div>
         <div class="toolbar">
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-              <a name="view1" href="[[rootPath]]view1">Login</a>
+              <a name="home" href="[[rootPath]]home">Login</a>
               <a name="view2" href="[[rootPath]]view2">Register</a>
               <a name="view3" href="[[rootPath]]view3">Browse Games</a>
           </iron-selector>
         </div>
       </header>
 
+      <template is="dom-if" if="{{isMenuOpened}}">
+        <div class="toolbar_responsive">
+            <ul>
+              <li><a name="home" href="[[rootPath]]home">Login</a></li>
+              <li><a name="view2" href="[[rootPath]]view2">Register</a></li>
+              <li><a name="view3" href="[[rootPath]]view3">Browse Games</a></li>
+            </ul>
+        </div>
+      </template>
+
       <main>
         <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-          <my-view1 name="view1"></my-view1>
+          <app-home name="home"></app-home>
           <my-view2 name="view2"></my-view2>
           <my-view3 name="view3"></my-view3>
           <my-view404 name="view404"></my-view404>
@@ -158,7 +196,11 @@ class GameleonApp extends PolymerElement {
         observer: '_pageChanged'
       },
       routeData: Object,
-      subroute: Object
+      subroute: Object,
+      isMenuOpened: {
+        type: Boolean,
+        value: false,
+      }
     };
   }
 
@@ -174,8 +216,8 @@ class GameleonApp extends PolymerElement {
      // If no page was found in the route data, page will be an empty string.
      // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
     if (!page) {
-      this.page = 'view1';
-    } else if (['view1', 'view2', 'view3'].indexOf(page) !== -1) {
+      this.page = 'home';
+    } else if (['home', 'view2', 'view3'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -193,8 +235,8 @@ class GameleonApp extends PolymerElement {
     // Note: `polymer build` doesn't like string concatenation in the import
     // statement, so break it up.
     switch (page) {
-      case 'view1':
-        import('./my-view1.js');
+      case 'home':
+        import('./components/home-view.js');
         break;
       case 'view2':
         import('./my-view2.js');
@@ -206,6 +248,10 @@ class GameleonApp extends PolymerElement {
         import('./my-view404.js');
         break;
     }
+  }
+
+  _toggleMenu() {
+    this.isMenuOpened = !this.isMenuOpened;
   }
 }
 

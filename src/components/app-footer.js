@@ -18,19 +18,22 @@ class AppFooter extends PolymerElement {
                     background: black;
                     height: 80px;
                     width: 100%;
-                    color: white
+                    color: white;
+                    font-size: 14px;
                 }
 
                 .fecha {
                     color: var(--app-primary-color);
                 }
-            @media (max-width: 640px) {
-                div {
-                    text-align: center;
+
+            @media (max-width: 768px) {
+                :host {
+                    justify-content: center;
+                    padding-left: 0;
                 }
             }
             </style>
-            <div>
+            <div class="copyright">
                 <p>&copy; <span class="fecha">{{fecha}}</span> by Babeerlians</p>
             </div>
         `;

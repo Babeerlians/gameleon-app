@@ -5,7 +5,7 @@ import {
 import '@polymer/paper-styles/shadow.js';
 import '../styles/shared-styles.js';
 
-class HomeView extends PolymerElement {
+class AppHome extends PolymerElement {
     static get template() {
         return html `
             <style include="shared-styles">
@@ -14,6 +14,8 @@ class HomeView extends PolymerElement {
                     justify-content: center;
                     margin: 0px;
                     padding: 0px;
+                    color: white;
+                    animation: fadingView .8s ease-in-out;
                 }
 
                 .hero-bkg {
@@ -24,8 +26,9 @@ class HomeView extends PolymerElement {
                 }
 
                 .hero-content {
-                    max-width: 50%;
-                    padding-left: 2em;
+                    max-width: 60%;
+                    padding-left: 4em;
+                    padding-right: 8em;
                     display: flex;
                     flex-flow: row nowrap;
                     justify-content: center;
@@ -43,7 +46,7 @@ class HomeView extends PolymerElement {
 
                 .main-title {
                     color: white;
-                    font-size: 4em;
+                    font-size: 3.5em;
                     font-weight: normal;
                     font-family: 'Alfa Slab One', cursive;
                     line-height: 120%;
@@ -63,11 +66,51 @@ class HomeView extends PolymerElement {
                     background: var(--app-primary-color);
                 }
 
+             @media (max-width: 768px) {
+                .hero-bkg {
+                    width: 100%;
+                    background: url('../../images/hero-main-image.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    min-height:auto;
+                    height: 500px;
+                }
+
+                .hero-content {
+                    width: 100%;
+                    display: flex;
+                    flex-flow: column nowrap;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 0;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+                .hero-content img {
+                    display: none;
+                }
+
+                .claim_box {
+                    display: flex;
+                    flex-flow: column nowrap;
+                }
+                .main-title {
+                    font-size: 2em;
+                    text-align: center;
+                }
+
+                button {
+                    margin: 0 auto;
+                }
+            }
             </style>
             <div class="hero-bkg">
                 <div class="hero-content">
                     <img src="../../images/babeerlians-logo.png" alt="babeerlians logo">
-                    <div>
+                    <div class="claim_box">
                         <h1 class="main-title">Are you ready for the challenge?</h1>
                         <button>START THE JOURNEY!</button>
                     </div>
@@ -75,15 +118,6 @@ class HomeView extends PolymerElement {
             </div>
         `;
     }
-
-    static get properties() {
-        return {
-
-        };
-    }
-
-
-
 }
 
-customElements.define('home-view', HomeView);
+customElements.define('app-home', AppHome);

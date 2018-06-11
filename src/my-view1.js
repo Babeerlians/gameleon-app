@@ -21,7 +21,6 @@ class MyView1 extends PolymerElement {
           color: white;
           padding: 0px;
           animation: fadingView .8s ease-in-out;
-          will-change: animation;
         }
       </style>
       <home-view></home-view>
