@@ -1,11 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { setPassiveTouchGestures, setRootPath } from '@polymer/polymer/lib/utils/settings.js';
-import '@polymer/app-layout/app-drawer/app-drawer.js';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '@polymer/iron-pages/iron-pages.js';
@@ -13,6 +7,7 @@ import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
 import './components/home-view.js';
+import './components/app-footer.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -33,23 +28,41 @@ class GameleonApp extends PolymerElement {
           display: block;
         }
 
-        .burger {
-          display: none;
-        }
-
-        app-header {
+        .masthead {
           color: #fff;
           background-color: var(--app-dark-color);
           height: 80px;
-        }
-
-        app-header paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-
-        app-toolbar {
           display: flex;
-          justify-content: center;
+          flex-flow: row nowrap;
+        }
+
+        .masthead paper-icon-button {
+          --paper-icon-button-ink-color: white;
+          display: none;
+        }
+
+        .logo-box {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          flex: 1;
+          padding-left: 2em;
+        }
+
+        .main-logo {
+          font-family: 'Alfa Slab One', cursive;
+          font-weight: normal;
+          font-size: 1.5em;
+        }
+
+        .main-logo a {
+          color: white;
+          text-decoration: none;
+        }
+
+        .toolbar .drawer-list {
+          display: flex;
+          justify-content: flex-end;
           align-items: center;
           height: 100%;
         }
@@ -64,6 +77,15 @@ class GameleonApp extends PolymerElement {
           text-decoration: none;
           color: var(--app-primary-color);
           line-height: 40px;
+          transition: color .3s ease-in-out;
+        }
+
+        .drawer-list a:hover {
+          color: white;
+        }
+
+        .drawer-list a:focus {
+          color: white;
         }
 
         .drawer-list a.iron-selected {
@@ -71,18 +93,20 @@ class GameleonApp extends PolymerElement {
           font-weight: normal;
         }
 
-        .drawer {
-          margin-top: 4em;
-        }
-
-        .main-logo {
-          width: auto;
-          height: 70px;
-        }
-
         @media (max-width: 640px) {
-          .burger {
-           display: block;
+          .masthead paper-icon-button{
+             display: block;
+          }
+
+          .toolbar {
+            display: none;
+          }
+
+          .logo-box {
+            padding-left: 0.5em;
+          }
+          .main-logo {
+            font-size: 100%;
           }
         }
       </style>
@@ -93,31 +117,34 @@ class GameleonApp extends PolymerElement {
       <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
       </app-route>
 
-      <app-drawer-layout fullbleed="" narrow="{{narrow}}">
-        <!-- Main content -->
-        <app-header-layout has-scrolling-region="">
+      <header class="masthead">
+        <div class="logo-box">
+          <paper-icon-button icon="my-icons:menu"></paper-icon-button>
+          <div main-title="" class="main-logo">
+            <a name="view1" href="[[rootPath]]view1">GAMELEON APP</a>
+          </div>
+        </div>
+        <div class="toolbar">
+          <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+              <a name="view1" href="[[rootPath]]view1">Login</a>
+              <a name="view2" href="[[rootPath]]view2">Register</a>
+              <a name="view3" href="[[rootPath]]view3">Browse Games</a>
+          </iron-selector>
+        </div>
+      </header>
 
-          <app-header slot="header" condenses="" reveals="" effects="waterfall">
-            <app-toolbar>
-              <paper-icon-button icon="my-icons:menu" class="burger"></paper-icon-button>
-              <img src="../images/babeerlians-logo.png" alt="logo Babeerlians" class="main-logo"> 
-              <div main-title="">Gameleon App</div>
-              <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                  <a name="view1" href="[[rootPath]]view1">Login</a>
-                  <a name="view2" href="[[rootPath]]view2">Register</a>
-                  <a name="view3" href="[[rootPath]]view3">Browse Games</a>
-              </iron-selector>
-            </app-toolbar>
-          </app-header>
+      <main>
+        <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
+          <my-view1 name="view1"></my-view1>
+          <my-view2 name="view2"></my-view2>
+          <my-view3 name="view3"></my-view3>
+          <my-view404 name="view404"></my-view404>
+        </iron-pages>
+      </main>
 
-          <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-            <my-view1 name="view1"></my-view1>
-            <my-view2 name="view2"></my-view2>
-            <my-view3 name="view3"></my-view3>
-            <my-view404 name="view404"></my-view404>
-          </iron-pages>
-        </app-header-layout>
-     </app-drawer-layout> 
+      <footer>
+        <app-footer></app-footer>
+      </footer>
     `;
   }
 

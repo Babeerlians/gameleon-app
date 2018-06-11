@@ -25,11 +25,20 @@ class HomeView extends PolymerElement {
 
                 .hero-content {
                     max-width: 50%;
-                    padding: 5em;
+                    padding-left: 2em;
+                    display: flex;
+                    flex-flow: row nowrap;
+                    justify-content: center;
+                    align-items: center;
+                    position: absolute;
+                    top: 60%;
+                    transform: translateY(-60%);
                 }
 
                 .hero-content img {
-                    width: 150px;
+                    height: 200px;
+                    width: auto;
+                    padding: 0 2em;
                 }
 
                 .main-title {
@@ -38,10 +47,10 @@ class HomeView extends PolymerElement {
                     font-weight: normal;
                     font-family: 'Alfa Slab One', cursive;
                     line-height: 120%;
-                    text-shadow: 1px 1px 8px black;
+                    text-shadow: 2px 2px 8px black;
                 }
 
-                .btn {
+                button {
                     padding: 1em;
                     background: black;
                     color: white;
@@ -50,16 +59,17 @@ class HomeView extends PolymerElement {
                     transition: background .3s ease-in-out;
                 }
 
-                .btn:hover {
+                button:hover, button:focus {
                     background: var(--app-primary-color);
                 }
+
             </style>
             <div class="hero-bkg">
                 <div class="hero-content">
-                    <img src="../../images/babeerlians-logo.png" alt="babeerlians logo" width="200">
+                    <img src="../../images/babeerlians-logo.png" alt="babeerlians logo">
                     <div>
                         <h1 class="main-title">Are you ready for the challenge?</h1>
-                        <button class="btn">START THE JOURNEY!</button>
+                        <button>START THE JOURNEY!</button>
                     </div>
                 </div>
             </div>
