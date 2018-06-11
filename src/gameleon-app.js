@@ -40,10 +40,18 @@ class GameleonApp extends PolymerElement {
         app-header {
           color: #fff;
           background-color: var(--app-dark-color);
+          height: 80px;
         }
 
         app-header paper-icon-button {
           --paper-icon-button-ink-color: white;
+        }
+
+        app-toolbar {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
         }
 
         .drawer-list {
@@ -68,8 +76,8 @@ class GameleonApp extends PolymerElement {
         }
 
         .main-logo {
-          width: 100px;
-          height: auto;
+          width: auto;
+          height: 70px;
         }
 
         @media (max-width: 640px) {
@@ -92,7 +100,7 @@ class GameleonApp extends PolymerElement {
           <app-header slot="header" condenses="" reveals="" effects="waterfall">
             <app-toolbar>
               <paper-icon-button icon="my-icons:menu" class="burger"></paper-icon-button>
-              <!-- <img src="../images/manifest/icon-512x512.png" alt="logo Babeerlians" class="main-logo"> -->
+              <img src="../images/babeerlians-logo.png" alt="logo Babeerlians" class="main-logo"> 
               <div main-title="">Gameleon App</div>
               <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
                   <a name="view1" href="[[rootPath]]view1">Login</a>
