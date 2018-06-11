@@ -26,12 +26,14 @@ class GameleonApp extends PolymerElement {
           --app-dark-color: #22180e;
           --app-secondary-color: black;
           display: block;
+          width: 100%;
         }
 
         .masthead {
           color: #fff;
           background-color: var(--app-dark-color);
           height: 80px;
+          width: 100%;
           display: flex;
           flex-flow: row nowrap;
         }

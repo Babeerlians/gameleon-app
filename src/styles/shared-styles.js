@@ -40,6 +40,11 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         color: #212121;
         font-size: 22px;
       }
+
+      @keyframes fadingView {
+        0% { opacity: 0 }
+        100% { opacity: 100% }
+      }
     </style>
   </template>
 </dom-module>`;
