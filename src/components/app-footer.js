@@ -24,6 +24,11 @@ class AppFooter extends PolymerElement {
                 .fecha {
                     color: var(--app-primary-color);
                 }
+            @media (max-width: 640px) {
+                div {
+                    text-align: center;
+                }
+            }
             </style>
             <div>
                 <p>&copy; <span class="fecha">{{fecha}}</span> by Babeerlians</p>
