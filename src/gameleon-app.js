@@ -7,6 +7,7 @@ import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
 import './components/home-view.js';
+import './components/register-view.js';
 import './components/app-footer.js';
 
 // Gesture events like tap and track generated from touch will not be
@@ -129,7 +130,7 @@ class GameleonApp extends PolymerElement {
         <div class="toolbar">
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
               <a name="view1" href="[[rootPath]]view1">Login</a>
-              <a name="view2" href="[[rootPath]]view2">Register</a>
+              <a name="register" href="[[rootPath]]register">Register</a>
               <a name="view3" href="[[rootPath]]view3">Browse Games</a>
           </iron-selector>
         </div>
@@ -138,7 +139,7 @@ class GameleonApp extends PolymerElement {
       <main>
         <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
           <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
+          <register-view name="register"></register-view>
           <my-view3 name="view3"></my-view3>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
@@ -175,7 +176,7 @@ class GameleonApp extends PolymerElement {
      // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
     if (!page) {
       this.page = 'view1';
-    } else if (['view1', 'view2', 'view3'].indexOf(page) !== -1) {
+    } else if (['view1', 'register', 'view3'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -196,8 +197,8 @@ class GameleonApp extends PolymerElement {
       case 'view1':
         import('./my-view1.js');
         break;
-      case 'view2':
-        import('./my-view2.js');
+      case 'register':
+        import('./components/register-view.js');
         break;
       case 'view3':
         import('./my-view3.js');
