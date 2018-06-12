@@ -14,7 +14,7 @@ class AppHome extends PolymerElement {
                     justify-content: center;
                     margin: 0px;
                     padding: 0px;
-                    color: white;
+                    color: var(--app-light-color);
                     animation: fadingView .8s ease-in-out;
                 }
 
@@ -22,7 +22,7 @@ class AppHome extends PolymerElement {
                     width: 100%;
                     background: url('../../images/hero-main-image.jpg');
                     background-size: cover;
-                    min-height: 100vh;
+                    min-height: calc(100vh - 100px);
                 }
 
                 .hero-content {
@@ -45,7 +45,7 @@ class AppHome extends PolymerElement {
                 }
 
                 .main-title {
-                    color: white;
+                    color: var(--app-light-color);
                     font-size: 3.5em;
                     font-weight: normal;
                     font-family: 'Alfa Slab One', cursive;
@@ -55,15 +55,15 @@ class AppHome extends PolymerElement {
 
                 button {
                     padding: 1em;
-                    background: black;
-                    color: white;
+                    background: var(--app-dark-color);
+                    color: var(--app-light-color);
                     border: 0;
                     cursor: pointer;
                     transition: background .3s ease-in-out;
                 }
 
                 button:hover, button:focus {
-                    background: var(--app-primary-color);
+                    background: var(--app-secondary-color);
                 }
 
              @media (max-width: 768px) {
@@ -71,7 +71,7 @@ class AppHome extends PolymerElement {
                     width: 100%;
                     background: url('../../images/hero-main-image.jpg');
                     background-size: cover;
-                    background-position: center;
+                    background-position: right;
                     min-height:auto;
                     height: 500px;
                 }

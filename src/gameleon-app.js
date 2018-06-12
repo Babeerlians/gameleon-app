@@ -7,6 +7,7 @@ import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
 import './components/app-footer.js';
+import './styles/shared-styles.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -19,13 +20,14 @@ setRootPath(MyAppGlobals.rootPath);
 class GameleonApp extends PolymerElement {
   static get template() {
     return html`
-      <style>
+      <style include="shared-styles">
         :host {
-          --app-primary-color: #F1942F;
-          --app-dark-color: #22180e;
-          --app-secondary-color: black;
           display: block;
           width: 100%;
+          --app-primary-color: #F1942F;
+          --app-dark-color: #22180e;
+          --app-secondary-color: #e84118;
+          --app-light-color: #f5f6fa;
         }
 
         .masthead {
@@ -38,7 +40,7 @@ class GameleonApp extends PolymerElement {
         }
 
         .masthead paper-icon-button {
-          --paper-icon-button-ink-color: white;
+          --paper-icon-button-ink-color: var(--app-light-color);
           display: none;
         }
 
@@ -57,7 +59,7 @@ class GameleonApp extends PolymerElement {
         }
 
         .main-logo a {
-          color: white;
+          color: var(--app-light-color);
           text-decoration: none;
         }
 
@@ -82,15 +84,15 @@ class GameleonApp extends PolymerElement {
         }
 
         .drawer-list a:hover {
-          color: white;
+          color: var(--app-light-color);
         }
 
         .drawer-list a:focus {
-          color: white;
+          color: var(--app-light-color);
         }
 
         .drawer-list a.iron-selected {
-          color: white;
+          color: var(--app-light-color);
           font-weight: normal;
         }
 
@@ -110,7 +112,7 @@ class GameleonApp extends PolymerElement {
 
         .toolbar_responsive li {
           list-style-type: none;
-          border-bottom: 1px dotted black;
+          border-bottom: 1px dotted var(--app-dark-color);
           padding: 1em;
         }
 
@@ -119,9 +121,15 @@ class GameleonApp extends PolymerElement {
           color: var(--app-dark-color);
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .masthead paper-icon-button{
              display: block;
+             margin-right: 10px;
+             transition: color .3s ease-in-out;
+          }
+
+          .masthead paper-icon-button:hover {
+            color: var(--app-primary-color);
           }
 
           .toolbar {
@@ -133,6 +141,8 @@ class GameleonApp extends PolymerElement {
           }
           .main-logo {
             font-size: 100%;
+            padding-left: .5em;
+            flex: 1;
           }
 
           .toolbar_responsive {
@@ -149,10 +159,10 @@ class GameleonApp extends PolymerElement {
 
       <header class="masthead">
         <div class="logo-box">
-          <paper-icon-button icon="my-icons:menu" on-click="_toggleMenu"></paper-icon-button>
           <div main-title="" class="main-logo">
             <a name="home" href="[[rootPath]]home">GAMELEON APP</a>
           </div>
+          <paper-icon-button icon="my-icons:menu" on-click="_toggleMenu"></paper-icon-button>
         </div>
         <div class="toolbar">
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
@@ -236,7 +246,7 @@ class GameleonApp extends PolymerElement {
     // statement, so break it up.
     switch (page) {
       case 'home':
-        import('./components/home-view.js');
+        import('./views/home-view.js');
         break;
       case 'view2':
         import('./my-view2.js');
@@ -245,7 +255,7 @@ class GameleonApp extends PolymerElement {
         import('./my-view3.js');
         break;
       case 'view404':
-        import('./my-view404.js');
+        import('./views/my-view404.js');
         break;
     }
   }
