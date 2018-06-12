@@ -6,8 +6,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
-import './views/home-view.js';
-import './components/register-view.js';
 import './components/app-footer.js';
 import './styles/shared-styles.js';
 
@@ -168,9 +166,10 @@ class GameleonApp extends PolymerElement {
         </div>
         <div class="toolbar">
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+              <a name="home" href="[[rootPath]]home">Home</a>
+              <a name="login" href="[[rootPath]]login">Login</a>
               <a name="register" href="[[rootPath]]register">Register</a>
-              <a name="home" href="[[rootPath]]home">Login</a>
-              <a name="view3" href="[[rootPath]]view3">Browse Games</a>
+              <a href="#">Browse Games</a>
           </iron-selector>
         </div>
       </header>
@@ -178,19 +177,19 @@ class GameleonApp extends PolymerElement {
       <template is="dom-if" if="{{isMenuOpened}}">
         <div class="toolbar_responsive">
             <ul>
-              <li><a name="home" href="[[rootPath]]home">Login</a></li>
-              <li><a name="view2" href="[[rootPath]]view2">Register</a></li>
-              <li><a name="view3" href="[[rootPath]]view3">Browse Games</a></li>
+              <li><a name="home" href="[[rootPath]]home">Home</a></li>
+              <li><a name="login" href="[[rootPath]]login">Login</a></li>
+              <li><a name="register" href="[[rootPath]]register">Register</a></li>
+              <li><a href="#">Browse Games</a></li>
             </ul>
         </div>
       </template>
 
       <main>
         <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-          <register-view name="register"></register-view>
           <app-home name="home"></app-home>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
+          <login-view name="login"></login-view>
+          <register-view name="register"></register-view>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </main>
@@ -226,16 +225,11 @@ class GameleonApp extends PolymerElement {
   _routePageChanged(page) {
     if (!page) {
       this.page = 'home';
-    } else if (['home', 'register', 'view3'].indexOf(page) !== -1) {
+    } else if (['home', 'login', 'register'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
     }
-
-    // Close a non-persistent drawer when the page & route are changed.
-  /*   if (!this.$.drawer.persistent) {
-      this.$.drawer.close();
-    } */
   }
 
   _pageChanged(page) {
@@ -247,11 +241,11 @@ class GameleonApp extends PolymerElement {
       case 'home':
         import('./views/home-view.js');
         break;
-      case 'register':
-        import('./components/register-view.js');
+      case 'login':
+        import('./views/login-view.js');
         break;
-      case 'view3':
-        import('./my-view3.js');
+      case 'register':
+        import('./views/register-view.js');
         break;
       case 'view404':
         import('./views/my-view404.js');
