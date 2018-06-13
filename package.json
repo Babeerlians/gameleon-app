@@ -23,6 +23,7 @@
     "@polymer/iron-selector": "^3.0.0-pre.15",
     "@polymer/paper-button": "^3.0.0-pre.19",
     "@polymer/paper-icon-button": "^3.0.0-pre.15",
+    "@polymer/paper-input": "^3.0.0-pre.19",
     "@polymer/polymer": "^3.0.0",
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "polymer-redux": "^1.0.5",
@@ -31,7 +32,7 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "polymer-cli": "^1.7.1",
+    "polymer-cli": "^1.7.2",
     "wct-browser-legacy": "^1.0.0"
   },
   "engines": {
