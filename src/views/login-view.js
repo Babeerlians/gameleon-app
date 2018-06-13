@@ -104,9 +104,6 @@ class LoginView extends PolymerElement {
 
 
       <div class="page_register">
-            <div class="hero_register">
-                <img src="../../images/hero-login.png" alt="hero login">
-            </div>
             <div class="card">
                 <template is="dom-if" if="[[verify]]">
                     <p class="alert-success">
@@ -124,9 +121,10 @@ class LoginView extends PolymerElement {
             
                 <paper-button raised on-tap="register" class="indigo">CONTINUE</paper-button>
             </div>
+            <div class="hero_register">
+                <img src="../../images/hero-login-logo2.png" alt="hero login">
+            </div>
       </div>
-      
-     
     `;
     }
 
