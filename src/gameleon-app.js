@@ -98,30 +98,23 @@ class GameleonApp extends PolymerElement {
 
         .toolbar_responsive {
           display: none;
-          width: 100%;
-          background: var(--app-primary-color);
-          height: auto;
-          padding: 0;
-          margin: 0;
         }
 
-        .toolbar_responsive ul {
-          padding: 0px;
-          margin: 0;        
-        }
-
-        .toolbar_responsive li {
-          list-style-type: none;
-          border-bottom: 1px dotted var(--app-dark-color);
-          padding: 1em;
-        }
-
-        .toolbar_responsive li a {
-          text-decoration: none;
-          color: var(--app-dark-color);
+        .mobile_menu {
+          display: none;
         }
 
         @media (max-width: 768px) {
+          :host {
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            min-height: 100%;
+          }
+
+          main {
+            flex: 1 0 100vh;
+          }
           .masthead paper-icon-button{
              display: block;
              margin-right: 10px;
@@ -147,7 +140,33 @@ class GameleonApp extends PolymerElement {
 
           .toolbar_responsive {
             display: block;
+            position: absolute;
+            top: 80px;
+            width: 100%;
+            height: 100vh;
+            background: var(--app-primary-color);
+            height: auto;
+            padding: 0;
+            margin: 0;
+            z-index: 9999999;
           }
+
+          .toolbar_responsive ul {
+            padding: 0px;
+            margin: 0;        
+          }
+
+          .toolbar_responsive li {
+            list-style-type: none;
+            border-bottom: 1px dotted var(--app-dark-color);
+            padding: 1em;
+          }
+
+          .toolbar_responsive li a {
+            text-decoration: none;
+            color: var(--app-dark-color);
+          }
+
         }
       </style>
 
@@ -174,17 +193,19 @@ class GameleonApp extends PolymerElement {
         </div>
       </header>
 
-      <template is="dom-if" if="{{isMenuOpened}}">
-        <div class="toolbar_responsive">
-            <ul>
-              <li><a name="home" href="[[rootPath]]home">Home</a></li>
-              <li><a name="login" href="[[rootPath]]login">Login</a></li>
-              <li><a name="register" href="[[rootPath]]register">Register</a></li>
-              <li><a name="browse" href="[[rootPath]]browse">Browse Games</a></li>
-            </ul>
-        </div>
-      </template>
-
+      <div class="toolbar_responsive">
+          <template is="dom-if" if="{{isMenuOpened}}">
+            <div>
+                <ul>
+                  <li><a name="home" href="[[rootPath]]home" on-click="_toggleMenu">Home</a></li>
+                  <li><a name="login" href="[[rootPath]]login" on-click="_toggleMenu">Login</a></li>
+                  <li><a name="register" href="[[rootPath]]register" on-click="_toggleMenu">Register</a></li>
+                  <li><a name="browse" href="[[rootPath]]browse" on-click="_toggleMenu">Browse Games</a></li>
+                </ul>
+            </div>
+          </template>
+      </div>
+     
       <main>
         <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
           <app-home name="home"></app-home>

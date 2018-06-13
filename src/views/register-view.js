@@ -21,7 +21,7 @@ class RegisterView extends PolymerElement {
         }
 
         .page_register {
-          flex: 1;
+          flex: 1 0 100vh;
           display: flex;
           flex-flow: row nowrap;
           justify-content: center;

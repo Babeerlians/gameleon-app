@@ -62,6 +62,11 @@ class AppHome extends PolymerElement {
                     transition: background .3s ease-in-out;
                 }
 
+                button a {
+                    text-decoration: none;
+                    color: var(--app-light-color);
+                }
+
                 button:hover, button:focus {
                     background: var(--app-secondary-color);
                 }
@@ -71,26 +76,22 @@ class AppHome extends PolymerElement {
                     width: 100%;
                     background: url('../../images/hero-main-image.jpg');
                     background-size: cover;
-                    background-position: right;
-                    min-height:auto;
-                    height: 500px;
-                }
-
-                .hero-content {
-                    width: 100%;
-                    display: flex;
-                    flex-flow: column nowrap;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 0;
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
+                    background-position: center;
+                    height: 100vh;
                 }
 
                 .hero-content img {
                     display: none;
+                }
+
+                .hero-content {
+                    width: 100%;
+                    min-height: 100%;
+                    display: flex;
+                    flex-flow: column nowrap;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0 auto;
                 }
 
                 .claim_box {
@@ -98,12 +99,17 @@ class AppHome extends PolymerElement {
                     flex-flow: column nowrap;
                 }
                 .main-title {
-                    font-size: 2em;
+                    font-size: 180%;
                     text-align: center;
                 }
 
                 button {
                     margin: 0 auto;
+                }
+
+                button a {
+                    text-decoration: none;
+                    color: var(--app-light-color);
                 }
             }
             </style>
@@ -112,7 +118,7 @@ class AppHome extends PolymerElement {
                     <img src="../../images/babeerlians-logo.png" alt="babeerlians logo">
                     <div class="claim_box">
                         <h1 class="main-title">Are you ready for the challenge?</h1>
-                        <button>START THE JOURNEY!</button>
+                        <button><a href="[[rootPath]]browse">START THE JOURNEY!</a></button>
                     </div>
                 </div>
             </div>

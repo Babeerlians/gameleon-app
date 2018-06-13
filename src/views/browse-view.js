@@ -1,7 +1,10 @@
-import '../styles/shared-styles.js';
-
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
+import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '../my-icons.js';
+import '../styles/shared-styles.js';
 
 class BrowseView extends PolymerElement {
   static get template() {
@@ -57,13 +60,18 @@ class BrowseView extends PolymerElement {
 
         .game {
             margin: 1em;
-            max-width: 300px;
+            flex: 1 0 300px;
             display: flex;
             flex-flow: column wrap;
             justify-content: center;
             align-items: center;
             background: var(--app-light-color);
         }
+
+        .game:last-of-type {
+            flex: 0 0 300px;
+        }
+
 
         .game img {
             width: 100%;
@@ -83,6 +91,23 @@ class BrowseView extends PolymerElement {
             background: var(--app-primary-color);
         }
 
+        .game_box {
+            background: green;
+            border-radius: 25px;
+            padding: 2em;
+            width: 90%;
+            height: 100vh;
+            color: var(--app-light-color);
+            margin: 1em auto;
+            position: relative;
+        }
+
+        paper-icon-button {
+            position: absolute;
+            top: 1em;
+            right: 1em;
+        }
+
          @media (max-width: 768px) {
            h1 {
              color: var(--app-light-color);
@@ -90,76 +115,72 @@ class BrowseView extends PolymerElement {
            }
          }
       </style>
-      <div class="browse_list">
-         <h1>Browse games list</h1>
-         <div class="games">
-            <template is="dom-repeat" items="{{games}}" as="game">
-                <div class="game">
-                    <img src="{{game.thumbnailUrl}}" alt="game item">
-                    <h2>{{game.albumId}}</h2>
-                    <p>{{game.title}}</p>
-                    <button on-click="showGame">VIEW GAME</button>
+
+      <template is="dom-if" if="{{isGamesListOpened}}">
+            <div class="browse_list">
+                <h1>Browse games list</h1>
+                <div class="games">
+                <iron-ajax
+                        auto
+                        url="[[rootPath]]src/data/games.json"
+                        handle-as="json"
+                        last-response="{{data}}"
+                        debounce-duration="300">
+                </iron-ajax>
+
+                <template is="dom-repeat" items="{{data}}" as="game">
+                    <div class="game">
+                        <img src="{{game.thumbnailUrl}}" alt="game item">
+                        <h2>{{game.albumId}}</h2>
+                        <p>{{game.title}}</p> 
+                        <button on-click="showGame">VIEW GAME</button> 
+                    </div>
+                </template>
                 </div>
-            </template>
-         </div>
-         
-      </div>
+            </div>
+      </template>
+      
+
+      <template is="dom-if" if="{{isGameOpened}}">
+          <div class="game_box">
+              <paper-icon-button icon="my-icons:close" on-click="closeGameDetails"></paper-icon-button>
+              <p>GAME DETAILS BOX</p>
+          </div>
+      </template>
     `;
   }
 
+
   static get properties() {
       return {
-          games: {
-              type: Array,
-              value() {
-                  return [
-                    {
-                        albumId: 1,
-                        id: 1,
-                        title: "accusamus beatae ad facilis cum similique qui sunt",
-                        url: "http://placehold.it/600/92c952",
-                        thumbnailUrl: "http://placehold.it/150/92c952"
-                      },
-                      {
-                        albumId: 2,
-                        id: 2,
-                        title: "reprehenderit est deserunt velit ipsam",
-                        url: "http://placehold.it/600/771796",
-                        thumbnailUrl: "http://placehold.it/150/771796"
-                      },
-                      {
-                        albumId: 3,
-                        id: 3,
-                        title: "officia porro iure quia iusto qui ipsa ut modi",
-                        url: "http://placehold.it/600/24f355",
-                        thumbnailUrl: "http://placehold.it/150/24f355"
-                      },
-                      {
-                        albumId: 4,
-                        id: 4,
-                        title: "culpa odio esse rerum omnis laboriosam voluptate repudiandae",
-                        url: "http://placehold.it/600/d32776",
-                        thumbnailUrl: "http://placehold.it/150/d32776"
-                      },
-                      {
-                        albumId: 5,
-                        id: 5,
-                        title: "natus nisi omnis corporis facere molestiae rerum in",
-                        url: "http://placehold.it/600/f66b97",
-                        thumbnailUrl: "http://placehold.it/150/f66b97"
-                      },
-                      {
-                        "albumId": 6,
-                        id: 6,
-                        title: "accusamus ea aliquid et amet sequi nemo",
-                        url: "http://placehold.it/600/56a8c2",
-                        thumbnailUrl: "http://placehold.it/150/56a8c2"
-                      },
-                  ]
-              }
+          isGameOpened: {
+              type: Boolean,
+              value: false
+          },
+          isGamesListOpened: {
+              type: Boolean,
+              value: true
           }
       }
   }
+
+ 
+  connectedCallback() {
+      super.connectedCallback();
+  }
+
+  showGame(e) {
+      console.log(e.model.game.albumId);
+      this.isGameOpened = true;
+      this.isGamesListOpened = false;
+  }
+
+  closeGameDetails() {
+      this.isGameOpened = false;
+      this.isGamesListOpened = true;
+  }
+
+
 }
 
 window.customElements.define('browse-view', BrowseView);

@@ -21,7 +21,7 @@ class MyView404 extends PolymerElement {
           background-size: cover;
           background-position: center;
           width: 100%;
-          height: calc(100vh - 100px);
+          height: 100vh;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -46,7 +46,7 @@ class MyView404 extends PolymerElement {
          @media (max-width: 768px) {
            h1 {
              color: var(--app-light-color);
-             font-size: 100%;
+             font-size: 120%;
            }
          }
       </style>
