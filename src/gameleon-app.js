@@ -169,7 +169,7 @@ class GameleonApp extends PolymerElement {
               <a name="home" href="[[rootPath]]home">Home</a>
               <a name="login" href="[[rootPath]]login">Login</a>
               <a name="register" href="[[rootPath]]register">Register</a>
-              <a href="#">Browse Games</a>
+              <a name="browse" href="[[rootPath]]browse">Browse Games</a>
           </iron-selector>
         </div>
       </header>
@@ -180,7 +180,7 @@ class GameleonApp extends PolymerElement {
               <li><a name="home" href="[[rootPath]]home">Home</a></li>
               <li><a name="login" href="[[rootPath]]login">Login</a></li>
               <li><a name="register" href="[[rootPath]]register">Register</a></li>
-              <li><a href="#">Browse Games</a></li>
+              <li><a name="browse" href="[[rootPath]]browse">Browse Games</a></li>
             </ul>
         </div>
       </template>
@@ -190,6 +190,7 @@ class GameleonApp extends PolymerElement {
           <app-home name="home"></app-home>
           <login-view name="login"></login-view>
           <register-view name="register"></register-view>
+          <browse-view name="browse"></browse-view>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </main>
@@ -225,7 +226,7 @@ class GameleonApp extends PolymerElement {
   _routePageChanged(page) {
     if (!page) {
       this.page = 'home';
-    } else if (['home', 'login', 'register'].indexOf(page) !== -1) {
+    } else if (['home', 'login', 'register','browse'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -246,6 +247,9 @@ class GameleonApp extends PolymerElement {
         break;
       case 'register':
         import('./views/register-view.js');
+        break;
+      case 'browse':
+        import('./views/browse-view.js');
         break;
       case 'view404':
         import('./views/my-view404.js');
