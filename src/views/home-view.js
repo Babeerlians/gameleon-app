@@ -63,7 +63,7 @@ class AppHome extends PolymerElement {
                 }
 
                 button:hover, button:focus {
-                    background: var(--app-secondary-color);
+                    background: var(--app-error-color);
                 }
 
              @media (max-width: 768px) {

@@ -40,7 +40,7 @@ class MyView404 extends PolymerElement {
         }
 
         a:hover, a:focus {
-          color: var(--app-secondary-color);
+          color: var(--app-error-color);
         }
 
          @media (max-width: 768px) {

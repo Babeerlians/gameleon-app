@@ -6,10 +6,15 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
-import './views/home-view.js';
-import './components/register-view.js';
 import './components/app-footer.js';
 import './styles/shared-styles.js';
+import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from './store.js';
+import {
+  updateVerified,
+  updateLogin,
+  updateUserData,
+} from './actions/auth.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -19,7 +24,7 @@ setPassiveTouchGestures(true);
 // in `index.html`.
 setRootPath(MyAppGlobals.rootPath);
 
-class GameleonApp extends PolymerElement {
+class GameleonApp extends connect(store)(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles">
@@ -28,7 +33,8 @@ class GameleonApp extends PolymerElement {
           width: 100%;
           --app-primary-color: #F1942F;
           --app-dark-color: #22180e;
-          --app-secondary-color: #e84118;
+          --app-error-color: #e84118;
+          --app-success-color: #2ecc71;
           --app-light-color: #f5f6fa;
         }
 
@@ -122,6 +128,13 @@ class GameleonApp extends PolymerElement {
           text-decoration: none;
           color: var(--app-dark-color);
         }
+        
+        .imageAvatar {
+          width: 40px;
+          border-radius: 50%;
+          margin-left: 10px;
+        }
+
 
         @media (max-width: 768px) {
           .masthead paper-icon-button{
@@ -168,9 +181,19 @@ class GameleonApp extends PolymerElement {
         </div>
         <div class="toolbar">
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-              <a name="register" href="[[rootPath]]register">Register</a>
-              <a name="home" href="[[rootPath]]home">Login</a>
-              <a name="view3" href="[[rootPath]]view3">Browse Games</a>
+              <a name="home" href="[[rootPath]]home">Home</a>
+              <template is="dom-if" if="[[!_logged]]">
+                <a name="login" href="[[rootPath]]login">Login</a>
+                <a name="register" href="[[rootPath]]register">Register</a>
+              </template>
+              <template is="dom-if" if="[[_logged]]">
+                <a href="#">Browse Games</a>
+                <a href="#" on-tap="signOut">Sign out</a>
+              </template>
+              <template is="dom-if" if="[[_logged]]">
+                <p>{{_user.name}}</p>
+                <img class="imageAvatar" src="{{_user.avatar}}" alt="{{_user.name}}">
+              </template>
           </iron-selector>
         </div>
       </header>
@@ -178,19 +201,24 @@ class GameleonApp extends PolymerElement {
       <template is="dom-if" if="{{isMenuOpened}}">
         <div class="toolbar_responsive">
             <ul>
-              <li><a name="home" href="[[rootPath]]home">Login</a></li>
-              <li><a name="view2" href="[[rootPath]]view2">Register</a></li>
-              <li><a name="view3" href="[[rootPath]]view3">Browse Games</a></li>
+              <li><a name="home" href="[[rootPath]]home">Home</a></li>
+              <template is="dom-if" if="[[!_logged]]">
+                <li><a name="login" href="[[rootPath]]login">Login</a></li>
+                <li><a name="register" href="[[rootPath]]register">Register</a></li>
+              </template>
+              <template is="dom-if" if="[[_logged]]">
+                <li><a href="#">Browse Games</a></li>
+                <li><a href="#">Sign out</a></li>
+              </template>
             </ul>
         </div>
       </template>
 
       <main>
         <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
-          <register-view name="register"></register-view>
           <app-home name="home"></app-home>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
+          <login-view name="login"></login-view>
+          <register-view name="register"></register-view>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </main>
@@ -213,6 +241,13 @@ class GameleonApp extends PolymerElement {
       isMenuOpened: {
         type: Boolean,
         value: false,
+      },
+      _logged: {
+        type: Boolean,
+        value: false
+      },
+      _user: {
+        type: Object,
       }
     };
   }
@@ -223,19 +258,45 @@ class GameleonApp extends PolymerElement {
     ];
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.checkSession();
+  }
+
+  checkSession(){
+    firebase.auth().onAuthStateChanged(function (user) {
+      if(user){
+        if (user.emailVerified) {
+          store.dispatch(updateLogin(true));
+          const userProfile = {
+            name: user.displayName,
+            avatar: user.photoURL
+          }
+          store.dispatch(updateUserData(userProfile));
+        }
+      }
+    });
+  }
+
+  signOut(e){
+    e.preventDefault();
+    firebase.auth().signOut().then(function () {
+      store.dispatch(updateLogin(false));
+      this.set('route.path', '/login');
+    }.bind(this)).catch(function (error) {
+      console.error(error);
+    });
+  }
+  
+
   _routePageChanged(page) {
     if (!page) {
       this.page = 'home';
-    } else if (['home', 'register', 'view3'].indexOf(page) !== -1) {
+    } else if (['home', 'login', 'register'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
     }
-
-    // Close a non-persistent drawer when the page & route are changed.
-  /*   if (!this.$.drawer.persistent) {
-      this.$.drawer.close();
-    } */
   }
 
   _pageChanged(page) {
@@ -247,11 +308,11 @@ class GameleonApp extends PolymerElement {
       case 'home':
         import('./views/home-view.js');
         break;
-      case 'register':
-        import('./components/register-view.js');
+      case 'login':
+        import('./views/login-view.js');
         break;
-      case 'view3':
-        import('./my-view3.js');
+      case 'register':
+        import('./views/register-view.js');
         break;
       case 'view404':
         import('./views/my-view404.js');
@@ -261,6 +322,12 @@ class GameleonApp extends PolymerElement {
 
   _toggleMenu() {
     this.isMenuOpened = !this.isMenuOpened;
+  }
+
+  _stateChanged(state) {
+    this._verified = state.auth.verified;
+    this._logged = state.auth.logged;
+    this._user = state.auth.user;
   }
 }
 
