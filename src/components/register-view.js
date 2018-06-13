@@ -9,11 +9,15 @@
  */
 
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-import '@polymer/paper-input/paper-input.js';
 import '@polymer/iron-input/iron-input.js'
 import '@polymer/paper-button/paper-button.js';
+import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from '../store.js';
+import {
+    updateVerified,
+} from '../actions/auth.js';
 
-class RegisterView extends PolymerElement {
+class RegisterView extends connect(store)(PolymerElement) {
     static get template() {
         return html`
       <style include="shared-styles">
@@ -34,7 +38,7 @@ class RegisterView extends PolymerElement {
 
 
       <div class="card">
-        <template is="dom-if" if="[[verify]]">
+        <template is="dom-if" if="[[_verified]]">
             <p class="alert-success">
             <strong>Recibirás un correo, por favor verifica tu usuario</p>
         </template>
@@ -49,6 +53,7 @@ class RegisterView extends PolymerElement {
         </iron-input>
         
         <paper-button raised on-tap="register" class="indigo">ENVIAR</paper-button>
+        <p>{{message}}</p>
       </div>
     `;
     }
@@ -61,6 +66,9 @@ class RegisterView extends PolymerElement {
             password: {
                 type: String,
             },
+            _verified: {
+                type: Boolean,
+            }
         }
     }
 
@@ -86,7 +94,7 @@ class RegisterView extends PolymerElement {
                         user.sendEmailVerification();
                         console.log(user);
                         this.unauthenticated = false;
-                        this.verify = true;
+                        store.dispatch(updateVerified(true))
                     } else {
                         user.delete().then(function () {
                             this.error = 'Tu email es incorrecto, debes pertenecer a Babel ;)'
@@ -104,6 +112,11 @@ class RegisterView extends PolymerElement {
             this.error = 'Tu email es incorrecto, debes pertenecer a Babel ;)'
         }
 
+    }
+
+    _stateChanged(state) {
+        console.log("UPDATE");
+        this._verified = state.auth.verified;
     }
 }
 
