@@ -204,10 +204,10 @@ class GameleonApp extends connect(store)(PolymerElement) {
               <template is="dom-if" if="[[!_logged]]">
                 <a name="login" href="[[rootPath]]login">Login</a>
                 <a name="register" href="[[rootPath]]register">Register</a>
-                <a name="browse" href="[[rootPath]]browse">Browse Games</a>
               </template>
+              
               <template is="dom-if" if="[[_logged]]">
-                <a href="#">Browse Games</a>
+              <a name="browse" href="[[rootPath]]browse">Browse Games</a>
                 <a href="#" on-tap="signOut">Sign out</a>
               </template>
               <template is="dom-if" if="[[_logged]]">
