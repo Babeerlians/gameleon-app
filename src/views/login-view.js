@@ -1,10 +1,17 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js'; 
-import '@polymer/paper-input/paper-input.js';
 import '@polymer/iron-input/iron-input.js'
 import '@polymer/paper-button/paper-button.js'; 
 import '../styles/shared-styles.js';
+import '@polymer/app-route/app-route.js';
+import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from '../store.js';
+import {
+    updateVerified,
+    updateLogin,
+    updateUserData,
+} from '../actions/auth.js';
 
-class LoginView extends PolymerElement {
+class LoginView extends connect(store)(PolymerElement) {
     static get template() {
         return html`
       <style include="shared-styles">
@@ -42,15 +49,6 @@ class LoginView extends PolymerElement {
             height: 500px;
             width: auto;
             display: block;
-        }
-
-        .alert-success {
-            background: var(--app-secondary-color);
-            border-radius: 3px;
-            color: var(--app-light-color);
-            font-size: 1em;
-            font-weight: 400;
-            padding: 10px;
         }
 
         .card {
@@ -102,15 +100,22 @@ class LoginView extends PolymerElement {
         }
       </style>
 
+        <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
+        </app-location>
 
       <div class="page_register">
             <div class="hero_register">
                 <img src="../../images/hero-login.png" alt="hero login">
             </div>
             <div class="card">
-                <template is="dom-if" if="[[verify]]">
+                <template is="dom-if" if="[[!_verified]]">
                     <p class="alert-success">
-                    <strong>Recibirás un correo, por favor verifica tu usuario</p>
+                    <strong>Debes verificar tu usuario</p>
+                </template>
+
+                <template is="dom-if" if="[[_loginError]]">
+                    <p class="alert-error">
+                    <strong>{{errorMessage}}</p>
                 </template>
 
                 <h1>Sing in</h1>    
@@ -122,7 +127,8 @@ class LoginView extends PolymerElement {
                     <input is="iron-input" placeholder="Password" type="password">
                 </iron-input>
             
-                <paper-button raised on-tap="register" class="indigo">CONTINUE</paper-button>
+                <paper-button raised on-tap="login" class="indigo">CONTINUE</paper-button>
+                <paper-button raised on-tap="loginGoogle" class="indigo">SIGN IN WITH GOOGLE</paper-button>
             </div>
       </div>
       
@@ -138,49 +144,84 @@ class LoginView extends PolymerElement {
             password: {
                 type: String,
             },
+            _verified: {
+                type: Boolean,
+            },
+            _logged: {
+                type: Boolean,
+            },
+            _loginError: {
+                type: Boolean,
+            },
+            errorMessage: {
+                type: String,
+            }
         }
     }
 
-    isBabelEmail(email) {
-        return email.endsWith("@babel.es");
+    showError(message) {
+        store.dispatch(updateVerified(true));
+        this._loginError = true;
+        this.errorMessage = message;
     }
 
-    register() {
-        console.log("USER");
-        if (this.isBabelEmail(this.username)) {
-            firebase.auth().createUserWithEmailAndPassword(this.username, this.password).catch(function (error) {
-                // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-            });
+    resetLogin() {
+        this.username = '';
+        this.password = '';
+    }
 
-            this.username = '';
-            this.password = '';
-
-            firebase.auth().onAuthStateChanged(function (user) {
-                if (user) {
-                    if (this.isBabelEmail(user.email)) {
-                        user.sendEmailVerification();
-                        console.log(user);
-                        this.unauthenticated = false;
-                        this.verify = true;
-                    } else {
-                        user.delete().then(function () {
-                            this.error = 'Tu email es incorrecto, debes pertenecer a Babel ;)'
-                            console.log('Usuario borrado');
-                        }).catch(function (error) {
-                            // An error happened.
-                        });
-                    }
-                } else {
-                    // User is signed out.
-                    // ...
+    loginGoogle() {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        firebase.auth().signInWithPopup(provider)
+        .then(function(userdata){
+            if (userdata.user.emailVerified) {
+                store.dispatch(updateLogin(true));
+                const user = {
+                    name: userdata.user.displayName,
+                    avatar: userdata.user.photoURL
                 }
-            }.bind(this));
-        } else {
-            this.error = 'Tu email es incorrecto, debes pertenecer a Babel ;)'
-        }
+                store.dispatch(updateUserData(user));
+                this.set('route.path', '/home');
+            } else {
+                store.dispatch(updateVerified(false));
+            }
+            console.log(userdata)
+        }.bind(this)).catch(function(error){
+            console.error(error);
+        })
+    }
 
+    login() {
+        firebase.auth().signInWithEmailAndPassword(this.username, this.password).catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            this.resetLogin();
+            this.showError(error.message);
+            console.error(error);
+        }.bind(this));
+
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                console.log("LOGADO")
+                console.log(user);
+                if (user.emailVerified) {
+                    store.dispatch(updateLogin(true));
+                    this.set('route.path', '/home');                   
+                }else{
+                    store.dispatch(updateVerified(false));
+                }
+            } else {
+                // User is signed out.
+                // ...
+            }
+        }.bind(this));
+    }
+    
+
+    _stateChanged(state) {
+        this._verified = state.auth.verified;
+        this._logged = state.auth.logged;
     }
 }
 

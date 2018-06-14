@@ -26,6 +26,24 @@ $_documentContainer.innerHTML = `<dom-module id="shared-styles">
         line-height: 64px;
       }
 
+      .alert-success {
+            background: var(--app-success-color);
+            border-radius: 3px;
+            color: var(--app-light-color);
+            font-size: 1em;
+            font-weight: 400;
+            padding: 10px;
+      }
+
+      .alert-error {
+          background: var(--app-error-color);
+          border-radius: 3px;
+          color: var(--app-light-color);
+          font-size: 1em;
+          font-weight: 400;
+          padding: 10px;
+      }
+
       @keyframes fadingView {
         0% { opacity: 0 }
         100% { opacity: 100% }

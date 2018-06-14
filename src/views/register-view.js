@@ -1,10 +1,15 @@
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js'; 
-import '@polymer/paper-input/paper-input.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import '@polymer/app-route/app-route.js';
 import '@polymer/iron-input/iron-input.js'
-import '@polymer/paper-button/paper-button.js'; 
+import '@polymer/paper-button/paper-button.js';
 import '../styles/shared-styles.js';
+import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from '../store.js';
+import {
+    updateVerified,
+} from '../actions/auth.js';
 
-class RegisterView extends PolymerElement {
+class RegisterView extends connect(store)(PolymerElement) {
     static get template() {
         return html`
       <style include="shared-styles">
@@ -42,15 +47,6 @@ class RegisterView extends PolymerElement {
             height: 500px;
             width: auto;
             display: block;
-        }
-
-        .alert-success {
-            background: var(--app-secondary-color);
-            border-radius: 3px;
-            color: var(--app-light-color);
-            font-size: 1em;
-            font-weight: 400;
-            padding: 10px;
         }
 
         .card {
@@ -102,9 +98,15 @@ class RegisterView extends PolymerElement {
         }
       </style>
 
+      <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
+      </app-location>
 
       <div class="page_register">
             <div class="card">
+                <template is="dom-if" if="[[_loginError]]">
+                    <p class="alert-error">
+                    <strong>{{errorMessage}}</p>
+                </template>
                 <h1>Register a new user</h1>    
                 <iron-input bind-value="{{username}}">
                     <input is="iron-input" placeholder="Username">
@@ -115,11 +117,6 @@ class RegisterView extends PolymerElement {
                 </iron-input>
             
                 <paper-button raised on-tap="register" class="indigo">SUBMIT</paper-button>
-
-                <template is="dom-if" if="[[verify]]">
-                    <p class="alert-success">
-                    <strong>Recibirás un correo, por favor verifica tu usuario</p>
-                </template>
             </div>
 
             <div class="hero_register">
@@ -139,11 +136,30 @@ class RegisterView extends PolymerElement {
             password: {
                 type: String,
             },
+            _verified: {
+                type: Boolean,
+            },
+            _loginError: {
+                type: Boolean,
+            },
+            errorMessage: {
+                type: String,
+            }
         }
     }
 
     isBabelEmail(email) {
         return email.endsWith("@babel.es");
+    }
+
+    showError(message) {
+        this._loginError = true;
+        this.errorMessage = message;
+    }
+
+    resetLogin(){
+        this.username = '';
+        this.password = '';
     }
 
     register() {
@@ -152,11 +168,10 @@ class RegisterView extends PolymerElement {
             firebase.auth().createUserWithEmailAndPassword(this.username, this.password).catch(function (error) {
                 // Handle Errors here.
                 var errorCode = error.code;
-                var errorMessage = error.message;
-            });
+                this.showError(error.message);
+            }.bind(this));
 
-            this.username = '';
-            this.password = '';
+            this.resetLogin();
 
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
@@ -164,11 +179,13 @@ class RegisterView extends PolymerElement {
                         user.sendEmailVerification();
                         console.log(user);
                         this.unauthenticated = false;
-                        this.verify = true;
+                        this.resetLogin();
+                        store.dispatch(updateVerified(false))
+                        this.set('route.path', '/login');
                     } else {
                         user.delete().then(function () {
-                            this.error = 'Tu email es incorrecto, debes pertenecer a Babel ;)'
-                            console.log('Usuario borrado');
+                            this.resetLogin();
+                            this.showError("Tu email no pertenece a Babel")
                         }).catch(function (error) {
                             // An error happened.
                         });
@@ -179,9 +196,14 @@ class RegisterView extends PolymerElement {
                 }
             }.bind(this));
         } else {
-            this.error = 'Tu email es incorrecto, debes pertenecer a Babel ;)'
+            this.resetLogin();
+            this.showError("Tu email no pertenece a Babel");
         }
 
+    }
+
+    _stateChanged(state) {
+        this._verified = state.auth.verified;
     }
 }
 

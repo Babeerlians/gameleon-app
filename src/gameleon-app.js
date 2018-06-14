@@ -8,6 +8,13 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import './my-icons.js';
 import './components/app-footer.js';
 import './styles/shared-styles.js';
+import { connect } from 'pwa-helpers/connect-mixin.js';
+import { store } from './store.js';
+import {
+  updateVerified,
+  updateLogin,
+  updateUserData,
+} from './actions/auth.js';
 
 // Gesture events like tap and track generated from touch will not be
 // preventable, allowing for better scrolling performance.
@@ -17,7 +24,7 @@ setPassiveTouchGestures(true);
 // in `index.html`.
 setRootPath(MyAppGlobals.rootPath);
 
-class GameleonApp extends PolymerElement {
+class GameleonApp extends connect(store)(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles">
@@ -26,7 +33,8 @@ class GameleonApp extends PolymerElement {
           width: 100%;
           --app-primary-color: #F1942F;
           --app-dark-color: #22180e;
-          --app-secondary-color: #e84118;
+          --app-error-color: #e84118;
+          --app-success-color: #2ecc71;
           --app-light-color: #f5f6fa;
         }
 
@@ -103,6 +111,13 @@ class GameleonApp extends PolymerElement {
         .mobile_menu {
           display: none;
         }
+        
+        .imageAvatar {
+          width: 40px;
+          border-radius: 50%;
+          margin-left: 10px;
+        }
+
 
         @media (max-width: 768px) {
           :host {
@@ -186,26 +201,39 @@ class GameleonApp extends PolymerElement {
         <div class="toolbar">
           <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
               <a name="home" href="[[rootPath]]home">Home</a>
-              <a name="login" href="[[rootPath]]login">Login</a>
-              <a name="register" href="[[rootPath]]register">Register</a>
-              <a name="browse" href="[[rootPath]]browse">Browse Games</a>
+              <template is="dom-if" if="[[!_logged]]">
+                <a name="login" href="[[rootPath]]login">Login</a>
+                <a name="register" href="[[rootPath]]register">Register</a>
+                <a name="browse" href="[[rootPath]]browse">Browse Games</a>
+              </template>
+              <template is="dom-if" if="[[_logged]]">
+                <a href="#">Browse Games</a>
+                <a href="#" on-tap="signOut">Sign out</a>
+              </template>
+              <template is="dom-if" if="[[_logged]]">
+                <p>{{_user.name}}</p>
+                <img class="imageAvatar" src="{{_user.avatar}}" alt="{{_user.name}}">
+              </template>
           </iron-selector>
         </div>
       </header>
 
-      <div class="toolbar_responsive">
-          <template is="dom-if" if="{{isMenuOpened}}">
-            <div>
-                <ul>
-                  <li><a name="home" href="[[rootPath]]home" on-click="_toggleMenu">Home</a></li>
-                  <li><a name="login" href="[[rootPath]]login" on-click="_toggleMenu">Login</a></li>
-                  <li><a name="register" href="[[rootPath]]register" on-click="_toggleMenu">Register</a></li>
-                  <li><a name="browse" href="[[rootPath]]browse" on-click="_toggleMenu">Browse Games</a></li>
-                </ul>
-            </div>
-          </template>
-      </div>
-     
+      <template is="dom-if" if="{{isMenuOpened}}">
+        <div class="toolbar_responsive">
+            <ul>
+              <li><a name="home" href="[[rootPath]]home" on-click="_toggleMenu">Home</a></li>
+              <template is="dom-if" if="[[!_logged]]">
+                 <li><a name="login" href="[[rootPath]]login" on-click="_toggleMenu">Login</a></li>
+                 <li><a name="register" href="[[rootPath]]register" on-click="_toggleMenu">Register</a></li>
+              </template>
+              <template is="dom-if" if="[[_logged]]">
+              <li><a name="browse" href="[[rootPath]]browse" on-click="_toggleMenu">Browse Games</a></li>
+                <li><a href="#">Sign out</a></li>
+              </template>
+            </ul>
+        </div>
+      </template>
+
       <main>
         <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
           <app-home name="home"></app-home>
@@ -234,6 +262,13 @@ class GameleonApp extends PolymerElement {
       isMenuOpened: {
         type: Boolean,
         value: false,
+      },
+      _logged: {
+        type: Boolean,
+        value: false
+      },
+      _user: {
+        type: Object,
       }
     };
   }
@@ -243,6 +278,37 @@ class GameleonApp extends PolymerElement {
       '_routePageChanged(routeData.page)'
     ];
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.checkSession();
+  }
+
+  checkSession(){
+    firebase.auth().onAuthStateChanged(function (user) {
+      if(user){
+        if (user.emailVerified) {
+          store.dispatch(updateLogin(true));
+          const userProfile = {
+            name: user.displayName,
+            avatar: user.photoURL
+          }
+          store.dispatch(updateUserData(userProfile));
+        }
+      }
+    });
+  }
+
+  signOut(e){
+    e.preventDefault();
+    firebase.auth().signOut().then(function () {
+      store.dispatch(updateLogin(false));
+      this.set('route.path', '/login');
+    }.bind(this)).catch(function (error) {
+      console.error(error);
+    });
+  }
+  
 
   _routePageChanged(page) {
     if (!page) {
@@ -280,6 +346,12 @@ class GameleonApp extends PolymerElement {
 
   _toggleMenu() {
     this.isMenuOpened = !this.isMenuOpened;
+  }
+
+  _stateChanged(state) {
+    this._verified = state.auth.verified;
+    this._logged = state.auth.logged;
+    this._user = state.auth.user;
   }
 }
 
