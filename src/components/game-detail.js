@@ -39,8 +39,13 @@ class GameDetail extends PolymerElement {
                 }
                 </style>
 
+        <app-route
+        route="[[route]]"
+        pattern="/:title"
+        data="{{routeData}}"></app-route>
+
         <div class="game">
-            <h1>DEMO DETAIL</h1>
+            <h1>[[routeData.title]]</h1>
             <img src="[[item.thumbnailUrl]]" alt="[[item.title]]">
             <h2>[[item.albumId]]</h2>
             <p>[[item.title]]</p> 

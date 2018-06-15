@@ -122,7 +122,7 @@ class BrowseView extends PolymerElement {
                         <!--<a href$="[[_getItemHref(item)]]">
                             <game-detail item="[[item]]"></game-detail>
                         </a>-->
-                        <a href$="[[_getItemHref(item)]]">
+                        <a href$="[[rootPath]]detail/[[item.title]]">
                             <game-detail item="[[item]]"></game-detail>
                         </a>   
                     </template>

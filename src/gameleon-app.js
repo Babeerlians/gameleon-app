@@ -242,6 +242,7 @@ class GameleonApp extends connect(store)(PolymerElement) {
           <register-view name="register"></register-view>
           <browse-view name="browse"></browse-view>
           <my-view404 name="view404"></my-view404>
+          <game-detail name="detail" route="[[subroute]]"></game-detail> 
         </iron-pages>
       </main>
 
@@ -312,9 +313,10 @@ class GameleonApp extends connect(store)(PolymerElement) {
   
 
   _routePageChanged(page) {
+    console.log("MEEEEH 2");
     if (!page) {
       this.page = 'home';
-    } else if (['home', 'login', 'register','browse'].indexOf(page) !== -1) {
+    } else if (['home', 'login', 'register', 'browse', 'detail'].indexOf(page) !== -1) {
       this.page = page;
     } else {
       this.page = 'view404';
@@ -326,6 +328,7 @@ class GameleonApp extends connect(store)(PolymerElement) {
     //
     // Note: `polymer build` doesn't like string concatenation in the import
     // statement, so break it up.
+    console.log("MEEEEH")
     switch (page) {
       case 'home':
         import('./views/home-view.js');
@@ -335,6 +338,9 @@ class GameleonApp extends connect(store)(PolymerElement) {
         break;
       case 'register':
         import('./views/register-view.js');
+        break;
+      case 'detail':
+        import('./components/game-detail.js');
         break;
       case 'browse':
         import('./views/browse-view.js');
