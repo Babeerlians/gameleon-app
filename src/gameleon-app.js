@@ -34,6 +34,7 @@ class GameleonApp extends connect(store)(PolymerElement) {
           --app-primary-color: #F1942F;
           --app-dark-color: #22180e;
           --app-error-color: #e84118;
+          --app-secondary-color: black;
           --app-success-color: #2ecc71;
           --app-light-color: #f5f6fa;
         }
@@ -227,8 +228,8 @@ class GameleonApp extends connect(store)(PolymerElement) {
                  <li><a name="register" href="[[rootPath]]register" on-click="_toggleMenu">Register</a></li>
               </template>
               <template is="dom-if" if="[[_logged]]">
-              <li><a name="browse" href="[[rootPath]]browse" on-click="_toggleMenu">Browse Games</a></li>
-                <li><a href="#">Sign out</a></li>
+                 <li><a name="browse" href="[[rootPath]]browse" on-click="_toggleMenu">Browse Games</a></li>
+                 <li><a href="#">Sign out</a></li>
               </template>
             </ul>
         </div>

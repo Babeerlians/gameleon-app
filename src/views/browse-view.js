@@ -1,10 +1,13 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/app-route/app-route.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../my-icons.js';
 import '../styles/shared-styles.js';
+import '../components/game-detail.js';
+
 
 class BrowseView extends PolymerElement {
   static get template() {
@@ -53,33 +56,14 @@ class BrowseView extends PolymerElement {
             width: 100%;
             display: flex;
             flex-flow: row wrap;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
             padding-left: 0;
         }
 
-        .game {
-            margin: 1em;
-            flex: 1 0 300px;
-            display: flex;
-            flex-flow: column wrap;
-            justify-content: center;
-            align-items: center;
-            background: var(--app-light-color);
-        }
-
-        .game:last-of-type {
-            flex: 0 0 300px;
-        }
-
-
-        .game img {
-            width: 100%;
-        }
-
         button {
             padding: 1em;
-            background: var(--app-secondary-color);
+            background: var(--app-primary-color);
             color: var(--app-light-color);
             border: 0;
             width: 100%;
@@ -88,18 +72,7 @@ class BrowseView extends PolymerElement {
         }
 
         button:hover, button:focus {
-            background: var(--app-primary-color);
-        }
-
-        .game_box {
-            background: green;
-            border-radius: 25px;
-            padding: 2em;
-            width: 90%;
-            height: 100vh;
-            color: var(--app-light-color);
-            margin: 1em auto;
-            position: relative;
+            background: var(--app-success-color);
         }
 
         paper-icon-button {
@@ -107,6 +80,21 @@ class BrowseView extends PolymerElement {
             top: 1em;
             right: 1em;
         }
+
+        a {
+            margin: 1em;
+            flex: 1 0 300px;
+            height: 500px;
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+         a:last-of-type {
+            flex: 0 0 300px;
+        }
+
 
          @media (max-width: 768px) {
            h1 {
@@ -116,47 +104,38 @@ class BrowseView extends PolymerElement {
          }
       </style>
 
+      <app-route route="{{subroute}}" pattern="/:id" data="{{data}}"></app-route>
+
       <template is="dom-if" if="{{isGamesListOpened}}">
             <div class="browse_list">
                 <h1>Browse games list</h1>
                 <div class="games">
-                <iron-ajax
-                        auto
-                        url="[[rootPath]]src/data/games.json"
-                        handle-as="json"
-                        last-response="{{data}}"
-                        debounce-duration="300">
-                </iron-ajax>
+                    <iron-ajax
+                            auto
+                            url="[[rootPath]]src/data/games.json"
+                            handle-as="json"
+                            last-response="{{data}}"
+                            debounce-duration="300">
+                    </iron-ajax>
 
-                <template is="dom-repeat" items="{{data}}" as="game">
-                    <div class="game">
-                        <img src="{{game.thumbnailUrl}}" alt="game item">
-                        <h2>{{game.albumId}}</h2>
-                        <p>{{game.title}}</p> 
-                        <button on-click="showGame">VIEW GAME</button> 
-                    </div>
-                </template>
+                    <template is="dom-repeat" items="{{data}}">
+                        <!--<a href$="[[_getItemHref(item)]]">
+                            <game-detail item="[[item]]"></game-detail>
+                        </a>-->
+                        <a href$="[[_getItemHref(item)]]">
+                            <game-detail item="[[item]]"></game-detail>
+                        </a>   
+                    </template>
                 </div>
             </div>
       </template>
       
-
-      <template is="dom-if" if="{{isGameOpened}}">
-          <div class="game_box">
-              <paper-icon-button icon="my-icons:close" on-click="closeGameDetails"></paper-icon-button>
-              <p>GAME DETAILS BOX</p>
-          </div>
-      </template>
     `;
   }
 
 
   static get properties() {
       return {
-          isGameOpened: {
-              type: Boolean,
-              value: false
-          },
           isGamesListOpened: {
               type: Boolean,
               value: true
@@ -169,15 +148,14 @@ class BrowseView extends PolymerElement {
       super.connectedCallback();
   }
 
-  showGame(e) {
+/*   showGame(e) {
       console.log(e.model.game.albumId);
-      this.isGameOpened = true;
-      this.isGamesListOpened = false;
   }
-
-  closeGameDetails() {
-      this.isGameOpened = false;
-      this.isGamesListOpened = true;
+ */
+  _getItemHref(item) {
+    // By returning null when `itemId` is undefined, the href attribute won't be set and
+    // the link will be disabled.
+    return item.albumId ? ['browse/games', item.title.toLowerCase().split(' ').join('-')].join('/') : null;
   }
 
 
